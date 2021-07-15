@@ -1,3 +1,4 @@
+import os
 import re
 from io import open
 import numpy as np
@@ -22,12 +23,26 @@ starter = """# sent_id = 0
 
 mwt_strings.append(starter)
 
+train = "es_ancora-ud-train.conllu"
+dev = "es_ancora-ud-dev.conllu"
+test = "es_ancora-ud-test.conllu"
+
+#Replace path, with starting directory to search for AnCora data
+for root, dirs, files in os.walk(r'c:\\'):
+    for name in files:
+        if name == train:
+            train_path = os.path.abspath(os.path.join(root, name))
+        if name == dev:
+            dev_path = os.path.abspath(os.path.join(root, name))
+        if name == test:
+            test_path = os.path.abspath(os.path.join(root, name))
+
 verb_list = []
-with open('es_ancora-ud-train.conllu', 'r', encoding='ISO-8859-1') as file:
+with open(train_path, 'r', encoding='ISO-8859-1') as file:
     train = file.read()
-with open('es_ancora-ud-dev.conllu', 'r', encoding='ISO-8859-1') as file:
+with open(dev_path, 'r', encoding='ISO-8859-1') as file:
     dev = file.read()
-with open('es_ancora-ud-test.conllu', 'r', encoding='ISO-8859-1') as file:
+with open(test_path, 'r', encoding='ISO-8859-1') as file:
     test = file.read()
 
 # sample verb = '10	hace	hacer	VERB	_	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	9	advcl	_	_'
@@ -39,9 +54,6 @@ for i, j, in enumerate(verbs_found):
 
 unique_verbs = list(np.unique(verbs_found))
 inf_ger_verbs = [verb for verb in unique_verbs if re.search(r'VerbForm=(?:(?:Ger)|(?:Inf))', verb) is not None]
-
-with open('verbs.txt', mode='wt', encoding='utf-8') as file:
-    file.write('\n'.join(unique_verbs))
 
 dir_obj_add = ["2\tme\tyo\tPRON\t_\tCase=Dat|Number=Sing|Person=1|PrepCase=Npr|PronType=Prs|Reflex=Yes\t1\tiobj\t_\t_",
                "2\tme\tyo\tPRON\t_\tCase=Dat|Number=Sing|Person=1|PrepCase=Npr|PronType=Prs\t1\tobj\t_\t_",

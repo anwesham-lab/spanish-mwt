@@ -133,7 +133,6 @@ for verb in inf_ger_verbs:
         if new_entry not in mwt_strings:
             mwt_strings.append(new_entry)
 
-
 # imperatives = pd.read_csv("imperatives.csv")
 
 reflex_te = ["2\tte\ttú\tPRON\t_\tCase=Dat|Number=Sing|Person=2|PrepCase=Npr|PronType=Prs|Reflex=Yes\t1\texpl:pv\t_\t_",

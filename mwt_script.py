@@ -24,31 +24,35 @@ starter = """# sent_id = 0
 
 mwt_strings.append(starter)
 
-train = "es_ancora-ud-train.conllu"
-dev = "es_ancora-ud-dev.conllu"
-test = "es_ancora-ud-test.conllu"
+# train = "es_ancora-ud-train.conllu"
+# dev = "es_ancora-ud-dev.conllu"
+# test = "es_ancora-ud-test.conllu"
+#
+# #Replace path, with starting directory to search for AnCora data
+# for root, dirs, files in os.walk(os.getcwd()):
+#     for name in files:
+#         if name == train:
+#             train_path = os.path.abspath(os.path.join(root, name))
+#         if name == dev:
+#             dev_path = os.path.abspath(os.path.join(root, name))
+#         if name == test:
+#             test_path = os.path.abspath(os.path.join(root, name))
+#
+# verb_list = []
+# with open(train_path, 'r', encoding='ISO-8859-1') as file:
+#     train = file.read()
+# with open(dev_path, 'r', encoding='ISO-8859-1') as file:
+#     dev = file.read()
+# with open(test_path, 'r', encoding='ISO-8859-1') as file:
+#     test = file.read()
 
-#Replace path, with starting directory to search for AnCora data
-for root, dirs, files in os.walk(os.getcwd()):
-    for name in files:
-        if name == train:
-            train_path = os.path.abspath(os.path.join(root, name))
-        if name == dev:
-            dev_path = os.path.abspath(os.path.join(root, name))
-        if name == test:
-            test_path = os.path.abspath(os.path.join(root, name))
-
-verb_list = []
-with open(train_path, 'r', encoding='ISO-8859-1') as file:
-    train = file.read()
-with open(dev_path, 'r', encoding='ISO-8859-1') as file:
-    dev = file.read()
-with open(test_path, 'r', encoding='ISO-8859-1') as file:
-    test = file.read()
+with open('verbs.txt', 'r') as file:
+    verbs_string = file.read()
 
 # sample verb = '10	hace	hacer	VERB	_	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	9	advcl	_	_'
-verb_re = r'[\d]+(\t[A-Za-z]+\t[A-Za-z]+\tVERB\t_\t[A-Za-z=|0-9]*\t[\d]+\t[a-z]+\t_\t_)'
-verbs_found = re.findall(verb_re, train) + re.findall(verb_re, dev) + re.findall(verb_re, test)
+# verb_re = r'[\d]+(\t[A-Za-z]+\t[A-Za-z]+\tVERB\t_\t[A-Za-z=|0-9]*\t[\d]+\t[a-z]+\t_\t_)'
+verbs_found = verbs_string.splitlines()
+print('The number of verbs found was:', len(verbs_found))
 for i, j, in enumerate(verbs_found):
     j_new = re.sub(r'\t[\d]+', '\t0', j)
     verbs_found[i] = "1" + j_new

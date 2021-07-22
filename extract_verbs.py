@@ -2,6 +2,7 @@ import re
 from io import open
 import numpy as np
 import pandas as pd
+import csv
 import random
 
 mwt_strings = []
@@ -132,7 +133,8 @@ for verb in inf_ger_verbs:
         if new_entry not in mwt_strings:
             mwt_strings.append(new_entry)
 
-imperatives = pd.read_csv("imperatives.csv")
+
+# imperatives = pd.read_csv("imperatives.csv")
 
 reflex_te = ["2\tte\ttú\tPRON\t_\tCase=Dat|Number=Sing|Person=2|PrepCase=Npr|PronType=Prs|Reflex=Yes\t1\texpl:pv\t_\t_",
              "2\tte\ttú\tPRON\t_\tCase=Dat|Number=Sing|Person=2|PrepCase=Npr|PronType=Prs|Reflex=Yes\t1\tiobj\t_\t_"]
@@ -146,21 +148,30 @@ con_obj_add = ["2\tme\tyo\tPRON\t_\tCase=Dat|Number=Sing|Person=1|PrepCase=Npr|P
                "2\tse\tél\tPRON\t_\tCase=Acc|Person=3|PrepCase=Npr|PronType=Prs\t1\tiobj\t_\t_",
                "2\tnos\tyo\tPRON\t_\tCase=Dat|Number=Plur|Person=1|PrepCase=Npr|PronType=Prs\t1\tiobj\t_\t_"]
 
-for i, row in imperatives.iterrows():
+with open("imperatives.csv", 'r') as imperative_list:
+    #imperative_titles = next(imperative_list)
+    imperative_titles = ['infinitive', 'tu', 'usted', 'ustedes']
+    imperative_conjugates = imperative_list.readlines()
+
+for row in imperative_conjugates:
+    row_forms = row.split(',')
+    ustedes = row_forms[3]
+    row_forms[3] = ustedes[:-1]
     for j in range(3):
         form = random.choice(['tu', 'usted', 'ustedes'])
         cap = random.randint(0, 1)
         clause_type = random.choice(['advcl', 'ccomp', 'xcomp', 'nsubj', 'csubj'])
-        if re.search('rse', row['infinitive']) is not None:
-            reflexive_verb = row['infinitive']
+        if re.search('rse', row_forms[imperative_titles.index('infinitive')]) is not None:
+            reflexive_verb = row_forms[imperative_titles.index('infinitive')]
             infinitive_verb = reflexive_verb[:-2]
-            mwt_token = row[form]
+            mwt_token = row_forms[imperative_titles.index(form)]
             if cap == 1:
                 mwt_token = mwt_token.capitalize()
             submitted_text = text + mwt_token + "."
             mwt_text = "1-2\t" + mwt_token + "\t_\t_\t_\t_\t_\t_\t_\tSpaceAfter=No"
             conj_verb = mwt_token[:-2]
-            conj_verb = conj_verb.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u')
+            conj_verb = conj_verb.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú',
+                                                                                                                  'u')
             if form == 'tu':
                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
                        "\tVERB\t_\tMood=Imp|Numb=Sing|Person=2|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
@@ -174,8 +185,8 @@ for i, row in imperatives.iterrows():
                        "\tVERB\t_\tMood=Imp|Numb=PLur|Person=3|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
                 add_pron = random.choice(reflex_se)
         else:
-            infinitive_verb = row['infinitive']
-            conj_verb = row[form]
+            infinitive_verb = row_forms[imperative_titles.index('infinitive')]
+            conj_verb = row_forms[imperative_titles.index(form)]
             syllables = 0
             i = len(conj_verb) - 1
             while i >= 0:
@@ -188,7 +199,7 @@ for i, row in imperatives.iterrows():
                             break
                 i -= 1
             if i >= 0:
-                mwt_verb = conj_verb[:i] + accent_letter[conj_verb[i].lower()] + conj_verb[i+1:]
+                mwt_verb = conj_verb[:i] + accent_letter[conj_verb[i].lower()] + conj_verb[i + 1:]
             else:
                 mwt_verb = conj_verb
             add_pron = random.choice(con_obj_add)
@@ -213,6 +224,74 @@ for i, row in imperatives.iterrows():
         new_entry = '\n'.join(text_parts)
         if new_entry not in mwt_strings:
             mwt_strings.append(new_entry)
+
+# for i, row in imperatives.iterrows():
+#     for j in range(3):
+#         form = random.choice(['tu', 'usted', 'ustedes'])
+#         cap = random.randint(0, 1)
+#         clause_type = random.choice(['advcl', 'ccomp', 'xcomp', 'nsubj', 'csubj'])
+#         if re.search('rse', row['infinitive']) is not None:
+#             reflexive_verb = row['infinitive']
+#             infinitive_verb = reflexive_verb[:-2]
+#             mwt_token = row[form]
+#             if cap == 1:
+#                 mwt_token = mwt_token.capitalize()
+#             submitted_text = text + mwt_token + "."
+#             mwt_text = "1-2\t" + mwt_token + "\t_\t_\t_\t_\t_\t_\t_\tSpaceAfter=No"
+#             conj_verb = mwt_token[:-2]
+#             conj_verb = conj_verb.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u')
+#             if form == 'tu':
+#                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
+#                        "\tVERB\t_\tMood=Imp|Numb=Sing|Person=2|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
+#                 add_pron = random.choice(reflex_te)
+#             elif form == 'usted':
+#                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
+#                        "\tVERB\t_\tMood=Imp|Numb=Sing|Person=3|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
+#                 add_pron = random.choice(reflex_se)
+#             else:
+#                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
+#                        "\tVERB\t_\tMood=Imp|Numb=PLur|Person=3|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
+#                 add_pron = random.choice(reflex_se)
+#         else:
+#             infinitive_verb = row['infinitive']
+#             conj_verb = row[form]
+#             syllables = 0
+#             i = len(conj_verb) - 1
+#             while i >= 0:
+#                 if conj_verb[i] in ['a', 'e', 'i', 'o', 'u']:
+#                     if conj_verb[i] == 'u' and conj_verb[i + 1] in ['e', 'i']:
+#                         pass
+#                     else:
+#                         syllables += 1
+#                         if syllables == 2:
+#                             break
+#                 i -= 1
+#             if i >= 0:
+#                 mwt_verb = conj_verb[:i] + accent_letter[conj_verb[i].lower()] + conj_verb[i+1:]
+#             else:
+#                 mwt_verb = conj_verb
+#             add_pron = random.choice(con_obj_add)
+#             mwt_pron = re.findall(r'[\d]+\t([A-Za-z]+)\t', add_pron)[0]
+#             mwt_token = mwt_verb + mwt_pron
+#             if cap == 1:
+#                 mwt_token = mwt_token.capitalize()
+#                 conj_verb = conj_verb.capitalize()
+#             submitted_text = text + mwt_token + "."
+#             mwt_text = "1-2\t" + mwt_token + "\t_\t_\t_\t_\t_\t_\t_\tSpaceAfter=No"
+#             if form == 'tu':
+#                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
+#                        "\tVERB\t_\tMood=Imp|Numb=Sing|Person=2|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
+#             elif form == 'usted':
+#                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
+#                        "\tVERB\t_\tMood=Imp|Numb=Sing|Person=3|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
+#             else:
+#                 verb = "1\t" + conj_verb + "\t" + infinitive_verb + \
+#                        "\tVERB\t_\tMood=Imp|Numb=PLur|Person=3|VerbForm=Fin\t0\t" + clause_type + "\t_\t_"
+#
+#         text_parts = [sent_id, submitted_text, mwt_text, verb, add_pron, period_dir]
+#         new_entry = '\n'.join(text_parts)
+#         if new_entry not in mwt_strings:
+#             mwt_strings.append(new_entry)
 
 with open('spanish.mwt', mode='wt', encoding='utf-8') as file:
     file.write('\n\n'.join(mwt_strings))

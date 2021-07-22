@@ -1,8 +1,8 @@
+import os
 import re
 from io import open
 import numpy as np
-import pandas as pd
-import csv
+#import pandas as pd
 import random
 
 mwt_strings = []
@@ -23,19 +23,39 @@ starter = """# sent_id = 0
 
 mwt_strings.append(starter)
 
+train = "es_ancora-ud-train.conllu"
+dev = "es_ancora-ud-dev.conllu"
+test = "es_ancora-ud-test.conllu"
+
+#Replace path, with starting directory to search for AnCora data
+for root, dirs, files in os.walk(os.getcwd()):
+    for name in files:
+        if name == train:
+            train_path = os.path.abspath(os.path.join(root, name))
+        if name == dev:
+            dev_path = os.path.abspath(os.path.join(root, name))
+        if name == test:
+            test_path = os.path.abspath(os.path.join(root, name))
+
 verb_list = []
-with open('es_ancora-ud-train.conllu', 'r', encoding='ISO-8859-1') as file:
+with open(train_path, 'r', encoding='ISO-8859-1') as file:
     train = file.read()
-with open('es_ancora-ud-dev.conllu', 'r', encoding='ISO-8859-1') as file:
+with open(dev_path, 'r', encoding='ISO-8859-1') as file:
     dev = file.read()
-with open('es_ancora-ud-test.conllu', 'r', encoding='ISO-8859-1') as file:
+with open(test_path, 'r', encoding='ISO-8859-1') as file:
     test = file.read()
+
+# verb_list = []
+# with open('es_ancora-ud-train.conllu', 'r', encoding='ISO-8859-1') as file:
+#     train = file.read()
+# with open('es_ancora-ud-dev.conllu', 'r', encoding='ISO-8859-1') as file:
+#     dev = file.read()
+# with open('es_ancora-ud-test.conllu', 'r', encoding='ISO-8859-1') as file:
+#     test = file.read()
 
 # sample verb = '10	hace	hacer	VERB	_	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	9	advcl	_	_'
 verb_re = r'([\d]+\t[A-Za-z]+\t[A-Za-z]+\tVERB\t_\t[A-Za-z=|0-9]*\t[\d]+\t[a-z]+\t_\t_)'
 verbs_found = re.findall(verb_re, train) + re.findall(verb_re, dev) + re.findall(verb_re, test)
-with open('verbs.txt', mode='wt', encoding='utf-8') as file:
-    file.write('\n'.join(verbs_found))
 for i, j, in enumerate(verbs_found):
     j_new = re.sub(r'\t[\d]+', '\t0', j)
     verbs_found[i] = "1" + j_new

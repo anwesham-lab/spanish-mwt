@@ -1,9 +1,6 @@
-import os
 import re
-#from io import open
 import numpy as np
 import csv
-import pandas as pd
 import random
 
 mwt_strings = []
@@ -23,28 +20,6 @@ starter = """# sent_id = 0
 3	.	.	PUNCT	_	PunctType=Peri	1	punct	_	_"""
 
 mwt_strings.append(starter)
-
-# train = "es_ancora-ud-train.conllu"
-# dev = "es_ancora-ud-dev.conllu"
-# test = "es_ancora-ud-test.conllu"
-#
-# #Replace path, with starting directory to search for AnCora data
-# for root, dirs, files in os.walk(os.getcwd()):
-#     for name in files:
-#         if name == train:
-#             train_path = os.path.abspath(os.path.join(root, name))
-#         if name == dev:
-#             dev_path = os.path.abspath(os.path.join(root, name))
-#         if name == test:
-#             test_path = os.path.abspath(os.path.join(root, name))
-#
-# verb_list = []
-# with open(train_path, 'r', encoding='ISO-8859-1') as file:
-#     train = file.read()
-# with open(dev_path, 'r', encoding='ISO-8859-1') as file:
-#     dev = file.read()
-# with open(test_path, 'r', encoding='ISO-8859-1') as file:
-#     test = file.read()
 
 with open('verbs.txt', 'r') as file:
     verbs_string = file.read()
@@ -148,7 +123,6 @@ for verb in inf_ger_verbs:
         new_entry = '\n'.join(text_parts)
         if new_entry not in mwt_strings:
             mwt_strings.append(new_entry)
-# imperatives = pd.read_csv("imperatives.csv")
 
 reflex_te = ["2\tte\ttú\tPRON\t_\tCase=Dat|Number=Sing|Person=2|PrepCase=Npr|PronType=Prs|Reflex=Yes\t1\texpl:pv\t_\t_",
              "2\tte\ttú\tPRON\t_\tCase=Dat|Number=Sing|Person=2|PrepCase=Npr|PronType=Prs|Reflex=Yes\t1\tiobj\t_\t_"]
